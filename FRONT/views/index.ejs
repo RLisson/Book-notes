@@ -9,16 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <div class="header-text">
-                <h1>📚 Book Notes</h1>
-                <p>Suas avaliações de livros favoritos</p>
-            </div>
-            <a href="/add" class="add-new-button">+ Nova Avaliação</a>
-        </div>
-    </header>
-    
+    <%- include('header.ejs') %>
     <main>
         <section class="books-grid">
             <% if (avaliations && avaliations.length > 0) { %>
@@ -43,7 +34,13 @@
                                             %>
                                             
                                             <% for(let i = 1; i <= 5; i++) { %>
-                                                <span class="star <%= starRating >= i ? 'filled' : (starRating >= i - 0.5 ? 'half-filled' : '') %>">★</span>
+                                                <% if (starRating >= i) { %>
+                                                    <span class="star filled">★</span>
+                                                <% } else if (starRating >= i - 0.5) { %>
+                                                    <span class="star half-filled">★</span>
+                                                <% } else { %>
+                                                    <span class="star">★</span>
+                                                <% } %>
                                             <% } %>
                                             
                                             <span class="rating-text">(<%= rating %>/10)</span>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= avaliation.title %> - Avaliação | Book Notes</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/avaliation.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <%- include('header.ejs') %>
+    
+    <main class="avaliation-main">
+        <div class="container">
+            <!-- Navegação -->
+            <nav class="breadcrumb">
+                <a href="/" class="breadcrumb-link">📚 Início</a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current">Avaliação</span>
+            </nav>
+
+            <article class="avaliation-card">
+                <!-- Hero Section -->
+                <header class="avaliation-hero">
+                    <div class="book-cover-container">
+                        <div class="cover-frame">
+                            <img src="<%= avaliation.book_cover %>" 
+                                 alt="Capa do livro <%= avaliation.title %>" 
+                                 class="book-cover">
+                        </div>
+                        <div class="cover-reflection"></div>
+                    </div>
+                    
+                    <div class="book-info">
+                        <h1 class="book-title"><%= avaliation.title %></h1>
+                        <% if (avaliation.author) { %>
+                            <p class="book-author">por <span><%= avaliation.author %></span></p>
+                        <% } %>
+                        
+                        <!-- Rating Display -->
+                        <div class="rating-display">
+                            <div class="rating-stars">
+                                <% 
+                                const rating = parseFloat(avaliation.note);
+                                const starRating = (rating / 10) * 5;
+                                %>
+                                
+                                <% for(let i = 1; i <= 5; i++) { %>
+                                    <span class="star <%= starRating >= i ? 'filled' : (starRating >= i - 0.5 ? 'half-filled' : '') %>">★</span>
+                                <% } %>
+                            </div>
+                            <div class="rating-score">
+                                <span class="score-number"><%= rating %></span>
+                                <span class="score-max">/10</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Review Section -->
+                <section class="review-section">
+                    <h2 class="section-title">
+                        <span class="title-icon">💭</span>
+                        Minha Avaliação
+                    </h2>
+                    
+                    <div class="review-content">
+                        <% if (avaliation.avaliation && avaliation.avaliation.trim()) { %>
+                            <div class="review-text">
+                                <blockquote>
+                                    <%= avaliation.avaliation %>
+                                </blockquote>
+                            </div>
+                        <% } else { %>
+                            <div class="no-review">
+                                <span class="no-review-icon">📝</span>
+                                <p>Nenhum comentário foi adicionado para esta avaliação.</p>
+                            </div>
+                        <% } %>
+                    </div>
+                </section>
+
+                <!-- Actions -->
+                <footer class="avaliation-actions">
+                    <a href="/" class="action-btn secondary">
+                        <span class="btn-icon">←</span>
+                        Voltar para a lista
+                    </a>
+                    <div class="action-group">
+                        <a href="/edit/<%= avaliation.id %>" class="action-btn primary">
+                            <span class="btn-icon">✏️</span>
+                            Editar avaliação
+                        </a>
+                        <button type="button" class="action-btn danger" onclick="confirmDelete('<%= avaliation.id %>')">
+                            <span class="btn-icon">🗑️</span>
+                            Remover avaliação
+                        </button>
+                    </div>
+                </footer>
+            </article>
+        </div>
+    </main>
+
+    <!-- Modal de Confirmação -->
+    <div id="delete-modal" class="delete-modal">
+        <div class="delete-modal-content">
+            <div class="delete-modal-header">
+                <h3>🗑️ Confirmar Exclusão</h3>
+            </div>
+            <div class="delete-modal-body">
+                <p>Tem certeza que deseja remover esta avaliação?</p>
+                <p class="warning-text">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="delete-modal-footer">
+                <button type="button" class="action-btn secondary" onclick="closeDeleteModal()">
+                    Cancelar
+                </button>
+                <form id="delete-form" method="POST" style="display: inline;">
+                    <button type="submit" class="action-btn danger">
+                        🗑️ Confirmar Exclusão
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(avaliationId) {
+            const modal = document.getElementById('delete-modal');
+            const form = document.getElementById('delete-form');
+            form.action = `/delete/${avaliationId}`;
+            modal.style.display = 'block';
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('delete-modal');
+            modal.style.display = 'none';
+        }
+
+        // Fechar modal clicando fora
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('delete-modal');
+            if (e.target === modal) {
+                closeDeleteModal();
+            }
+        });
+
+        // Fechar modal com tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+    </script>
+</body>
+</html>

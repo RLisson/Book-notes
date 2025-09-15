@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Avaliação</title>
+    <link rel="stylesheet" href="/styles/edit.css">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <%- include("header.ejs") %>
+    
+    <div class="container">
+        <div class="edit-header">
+            <div class="edit-hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="fas fa-edit"></i>
+                        Editar Avaliação
+                    </h1>
+                    <p class="hero-subtitle">Atualize sua avaliação e notas sobre o livro</p>
+                </div>
+                <div class="hero-decoration">
+                    <div class="floating-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="edit-content">
+            <div class="book-summary">
+                <div class="book-cover-container">
+                    <% if (avaliation.book_cover) { %>
+                        <img src="<%= avaliation.book_cover %>" alt="<%= avaliation.title %>" class="book-cover">
+                    <% } else { %>
+                        <div class="book-cover-placeholder">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="book-info">
+                    <h2 class="book-title"><%= avaliation.title %></h2>
+                    <% if (avaliation.author) { %>
+                        <p class="book-author">
+                            <i class="fas fa-user"></i>
+                            <%= avaliation.author %>
+                        </p>
+                    <% } %>
+                    <div class="current-rating">
+                        <span class="rating-label">Avaliação Atual:</span>
+                        <div class="stars-display">
+                            <% 
+                            const currentRating = parseFloat(avaliation.note);
+                            const starRating = (currentRating / 10) * 5;
+                            %>
+                            <% for (let i = 1; i <= 5; i++) { %>
+                                <i class="<%= starRating >= i ? 'fas' : 'far' %> fa-star"></i>
+                            <% } %>
+                        </div>
+                        <span class="rating-number">(<%= currentRating %>/10)</span>
+                    </div>
+                </div>
+            </div>
+
+            <form action="/edit/<%= avaliation.id %>" method="POST" class="edit-form">
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>
+                            <i class="fas fa-star"></i>
+                            Nova Avaliação
+                        </h3>
+                        <p>Selecione uma nova avaliação de 1 a 10</p>
+                    </div>
+                    
+                    <div class="rating-container">
+                        <div class="rating-stars">
+                            <% for (let i = 1; i <= 10; i++) { %>
+                                <input type="radio" id="star<%= i %>" name="note" value="<%= i %>" 
+                                       <%= avaliation.note == i ? 'checked' : '' %> required>
+                                <label for="star<%= i %>" class="star-label">
+                                    <i class="fas fa-star"></i>
+                                    <span class="star-text"><%= i %></span>
+                                </label>
+                            <% } %>
+                        </div>
+                        <div class="rating-feedback">
+                            <span class="rating-description">Clique nas estrelas para avaliar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>
+                            <i class="fas fa-sticky-note"></i>
+                            Suas Notas
+                        </h3>
+                        <p>Atualize suas anotações e impressões sobre o livro</p>
+                    </div>
+                    
+                    <div class="textarea-container">
+                        <textarea 
+                            name="avaliation" 
+                            id="avaliation" 
+                            placeholder="Compartilhe seus pensamentos, citações favoritas, reflexões..." 
+                            required><%= avaliation.avaliation %></textarea>
+                        <div class="textarea-counter">
+                            <span class="char-count">0</span> caracteres
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left"></i>
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Rating interaction
+        const ratingStars = document.querySelectorAll('.rating-stars input[type="radio"]');
+        const ratingDescription = document.querySelector('.rating-description');
+        const ratingDescriptions = {
+            1: 'Terrível 😞',
+            2: 'Muito ruim 😤',
+            3: 'Ruim 😐',
+            4: 'Abaixo da média 😕',
+            5: 'Mediano 😑',
+            6: 'Razoável 🙂',
+            7: 'Bom �',
+            8: 'Muito bom �',
+            9: 'Excelente 🤩',
+            10: 'Obra-prima! 🌟'
+        };
+
+        ratingStars.forEach(star => {
+            star.addEventListener('change', function() {
+                const rating = this.value;
+                ratingDescription.textContent = ratingDescriptions[rating];
+                ratingDescription.className = 'rating-description active';
+            });
+        });
+
+        // Initialize with current rating
+        const currentRating = document.querySelector('.rating-stars input[type="radio"]:checked');
+        if (currentRating) {
+            ratingDescription.textContent = ratingDescriptions[currentRating.value];
+            ratingDescription.className = 'rating-description active';
+        }
+
+        // Character counter for textarea
+        const textarea = document.getElementById('avaliation');
+        const charCount = document.querySelector('.char-count');
+
+        function updateCharCount() {
+            const count = textarea.value.length;
+            charCount.textContent = count;
+            
+            if (count > 500) {
+                charCount.parentElement.classList.add('warning');
+            } else {
+                charCount.parentElement.classList.remove('warning');
+            }
+        }
+
+        textarea.addEventListener('input', updateCharCount);
+        // Initialize counter
+        updateCharCount();
+
+        // Form validation and submission
+        const form = document.querySelector('.edit-form');
+        form.addEventListener('submit', function(e) {
+            const rating = document.querySelector('.rating-stars input[type="radio"]:checked');
+            const avaliation = textarea.value.trim();
+            
+            if (!rating) {
+                e.preventDefault();
+                alert('Por favor, selecione uma avaliação.');
+                return;
+            }
+            
+            if (!avaliation) {
+                e.preventDefault();
+                alert('Por favor, escreva uma nota sobre o livro.');
+                return;
+            }
+            
+            // Add loading state to submit button
+            const submitBtn = document.querySelector('.btn-primary');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            submitBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
