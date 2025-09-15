@@ -1,0 +1,26 @@
+{
+  "name": "backend-book-notes",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/RLisson/Book-notes#readme",
+  "bugs": {
+    "url": "https://github.com/RLisson/Book-notes/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RLisson/Book-notes.git"
+  },
+  "license": "ISC",
+  "author": "Lucas Risson",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
+  }
+}
