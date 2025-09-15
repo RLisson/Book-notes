@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Notes - Suas Avaliações de Livros</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-text">
+                <h1>📚 Book Notes</h1>
+                <p>Suas avaliações de livros favoritos</p>
+            </div>
+            <a href="/add" class="add-new-button">+ Nova Avaliação</a>
+        </div>
+    </header>
+    
+    <main>
+        <section class="books-grid">
+            <% if (avaliations && avaliations.length > 0) { %>
+                <ul>
+                    <% avaliations.forEach(avaliation => { %>
+                        <li class="book-card">
+                            <a href="/avaliations/<%= avaliation.id %>" class="card-link">
+                                <img src="<%= avaliation.book_cover %>" 
+                                     alt="Capa do livro <%= avaliation.title %>" 
+                                     loading="lazy">
+                                <div class="book-info">
+                                    <h2><%= avaliation.title %></h2>
+                                    <% if (avaliation.author) { %>
+                                        <p class="book-author">por <%= avaliation.author %></p>
+                                    <% } %>
+                                    <% if (avaliation.note !== null && avaliation.note !== undefined) { %>
+                                        <div class="rating">
+                                            <% 
+                                            // Converter avaliação de 0-10 para 0-5 estrelas
+                                            const rating = parseFloat(avaliation.note);
+                                            const starRating = (rating / 10) * 5; // Converte para escala de 5 estrelas
+                                            %>
+                                            
+                                            <% for(let i = 1; i <= 5; i++) { %>
+                                                <span class="star <%= starRating >= i ? 'filled' : (starRating >= i - 0.5 ? 'half-filled' : '') %>">★</span>
+                                            <% } %>
+                                            
+                                            <span class="rating-text">(<%= rating %>/10)</span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </a>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <div class="empty-state">
+                    <h2>📖 Nenhum livro encontrado</h2>
+                    <p>Comece adicionando suas primeiras avaliações de livros!</p>
+                    <a href="/add" class="add-button">Adicionar Livro</a>
+                </div>
+            <% } %>
+        </section>
+    </main>
+</body>
+</html>

@@ -41,9 +41,11 @@ app.get('/search', async (req, res) => {
             }
         });
 
-        // Extrair apenas o título e a imagem de cada livro
+        // Extrair título, autores e imagem de cada livro
+        console.log(response.data.items);
         const books = response.data.items?.map(item => ({
             title: item.volumeInfo.title,
+            authors: item.volumeInfo.authors || ['Autor não informado'],
             thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
         })) || [];
 
