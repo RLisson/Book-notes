@@ -24,35 +24,6 @@ db.connect();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// API route for frontend book search
-app.get('/api/search', async (req, res) => {
-    const bookTitle = req.query.title;
-    if (!bookTitle) {
-        return res.status(400).json({ error: 'Title query parameter is required' });
-    }
-    try {
-        const response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
-            params: {
-                q: bookTitle,
-                key: GOOGLE_BOOKS_API_KEY,
-                startIndex: 0,
-                maxResults: 10,
-            }
-        });
-
-        const books = response.data.items?.map(item => ({
-            title: item.volumeInfo.title,
-            authors: item.volumeInfo.authors || ['Autor não informado'],
-            thumbnail: item.volumeInfo.imageLinks?.thumbnail || null,
-        })) || [];
-
-        res.json(books);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
 // Search books by title on Google Books API
 app.get('/search', async (req, res) => {
     const bookTitle = req.query.title;
